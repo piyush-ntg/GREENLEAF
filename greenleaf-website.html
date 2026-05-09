@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenLeaf SmartScape Systems — Automating Urban India, One Garden at a Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a4a2e;
+    --green-mid: #2d7a4f;
+    --green-light: #4caf78;
+    --green-pale: #e8f5ee;
+    --green-mist: #f2faf5;
+    --cream: #faf9f6;
+    --dark: #0f1f16;
+    --text: #2c3e30;
+    --text-muted: #5a7060;
+    --border: rgba(45,122,79,0.15);
+    --white: #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 5%;
+    background: rgba(250,249,246,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.3s;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo svg { width: 32px; height: 32px; }
+  .nav-logo span { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--green-deep); font-weight: 700; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; letter-spacing: 0.02em; }
+  .nav-links a:hover { color: var(--green-mid); }
+  .nav-cta {
+    background: var(--green-deep); color: white; border: none; cursor: pointer;
+    padding: 0.6rem 1.4rem; border-radius: 50px; font-size: 0.9rem; font-weight: 500;
+    font-family: 'DM Sans', sans-serif; transition: background 0.2s, transform 0.15s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--green-mid); transform: translateY(-1px); }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 7rem 5% 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 80%, rgba(76,175,120,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 20% 20%, rgba(45,122,79,0.08) 0%, transparent 60%);
+  }
+  .hero-tag {
+    display: inline-block; margin-bottom: 1.5rem; z-index: 1;
+    background: var(--green-pale); color: var(--green-deep);
+    padding: 0.35rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 500;
+    border: 1px solid rgba(45,122,79,0.2); letter-spacing: 0.05em; text-transform: uppercase;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 900;
+    color: var(--green-deep);
+    line-height: 1.1;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
+    z-index: 1;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+  .hero-headline em { font-style: italic; color: var(--green-light); }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--text-muted); max-width: 560px; margin-bottom: 2.5rem;
+    font-weight: 300; z-index: 1;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; z-index: 1; animation: fadeUp 1.1s 0.3s ease both; }
+  .btn-primary {
+    background: var(--green-deep); color: white; padding: 0.85rem 2rem;
+    border-radius: 50px; text-decoration: none; font-weight: 500; font-size: 1rem;
+    transition: background 0.2s, transform 0.15s; display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-primary:hover { background: var(--green-mid); transform: translateY(-2px); }
+  .btn-secondary {
+    background: transparent; color: var(--green-deep); padding: 0.85rem 2rem;
+    border-radius: 50px; text-decoration: none; font-weight: 500; font-size: 1rem;
+    border: 1.5px solid var(--green-deep); transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--green-pale); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem; z-index: 1;
+    animation: fadeUp 1.2s 0.4s ease both;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--green-deep); }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.03em; }
+
+  /* Floating leaves */
+  .leaf-float {
+    position: absolute; opacity: 0.07; z-index: 0;
+    animation: floatLeaf 8s ease-in-out infinite;
+  }
+  .leaf-float:nth-child(2) { animation-delay: -3s; animation-duration: 11s; }
+  .leaf-float:nth-child(3) { animation-delay: -6s; animation-duration: 9s; }
+
+  /* ---- PROBLEM ---- */
+  #problem {
+    padding: 6rem 5%;
+    background: var(--green-deep);
+    color: white;
+    text-align: center;
+  }
+  .section-eyebrow { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-light); margin-bottom: 1rem; font-weight: 500; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1.5rem; }
+  .problem-desc { max-width: 640px; margin: 0 auto 3rem; font-size: 1.05rem; opacity: 0.8; font-weight: 300; }
+  .problem-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 0 auto; }
+  .problem-card {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 2rem;
+    text-align: left;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .problem-card:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); }
+  .problem-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .problem-card h3 { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; color: white; }
+  .problem-card p { font-size: 0.9rem; opacity: 0.7; }
+
+  /* ---- PRODUCT ---- */
+  #product { padding: 6rem 5%; }
+  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1100px; margin: 0 auto; }
+  .product-visual {
+    background: var(--green-pale);
+    border-radius: 24px;
+    padding: 3rem;
+    display: flex; flex-direction: column; gap: 1.2rem;
+  }
+  .hw-item {
+    background: white; border-radius: 12px; padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    border: 1px solid var(--border); transition: transform 0.2s;
+  }
+  .hw-item:hover { transform: translateX(4px); }
+  .hw-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green-light); flex-shrink: 0; }
+  .hw-item-title { font-weight: 500; font-size: 0.95rem; color: var(--green-deep); }
+  .hw-item-desc { font-size: 0.82rem; color: var(--text-muted); }
+  .product-content { }
+  .product-content .section-eyebrow { color: var(--green-mid); }
+  .product-content .section-title { color: var(--green-deep); margin-bottom: 1rem; text-align: left; }
+  .product-content p { color: var(--text-muted); margin-bottom: 1.5rem; }
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .feature-list li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; }
+  .check { width: 20px; height: 20px; background: var(--green-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .check svg { width: 12px; height: 12px; stroke: var(--green-mid); }
+
+  /* ---- APP ---- */
+  #app { padding: 6rem 5%; background: var(--green-mist); text-align: center; }
+  .app-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 900px; margin: 3rem auto 0; }
+  .app-card {
+    background: white; border-radius: 16px; padding: 2rem;
+    border: 1px solid var(--border); text-align: left;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .app-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(45,122,79,0.12); }
+  .app-icon { width: 48px; height: 48px; background: var(--green-pale); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+  .app-card h3 { font-size: 1rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.5rem; }
+  .app-card p { font-size: 0.875rem; color: var(--text-muted); }
+
+  /* ---- JOURNEY ---- */
+  #journey { padding: 6rem 5%; }
+  .journey-inner { max-width: 1000px; margin: 0 auto; }
+  .journey-steps { display: flex; flex-direction: column; gap: 0; position: relative; margin-top: 3rem; }
+  .journey-steps::before {
+    content: ''; position: absolute; left: 28px; top: 28px; bottom: 28px;
+    width: 2px; background: linear-gradient(to bottom, var(--green-light), var(--green-pale));
+  }
+  .journey-step { display: flex; gap: 2rem; align-items: flex-start; padding: 0 0 2.5rem; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--green-deep); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700;
+    flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .step-body { padding-top: 0.6rem; }
+  .step-body h3 { font-size: 1.1rem; font-weight: 500; color: var(--green-deep); margin-bottom: 0.4rem; }
+  .step-body p { font-size: 0.9rem; color: var(--text-muted); max-width: 540px; }
+
+  /* ---- MARKET ---- */
+  #market { padding: 6rem 5%; background: var(--green-deep); color: white; }
+  .market-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+  .market-bars { display: flex; flex-direction: column; gap: 2rem; margin-top: 3rem; }
+  .market-row { display: grid; grid-template-columns: 220px 1fr auto; align-items: center; gap: 1.5rem; text-align: left; }
+  .market-label { font-size: 0.9rem; opacity: 0.8; }
+  .bar-track { background: rgba(255,255,255,0.1); border-radius: 50px; height: 12px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 50px; background: var(--green-light); transition: width 1.5s ease; }
+  .market-val { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+
+  /* ---- COMPETITIVE ---- */
+  #competitive { padding: 6rem 5%; }
+  .comp-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .comp-table { width: 100%; border-collapse: collapse; margin-top: 3rem; border-radius: 16px; overflow: hidden; }
+  .comp-table th { background: var(--green-deep); color: white; padding: 1rem 1.2rem; font-weight: 500; font-size: 0.9rem; }
+  .comp-table th:first-child { text-align: left; border-radius: 16px 0 0 0; }
+  .comp-table th:last-child { border-radius: 0 16px 0 0; }
+  .comp-table td { padding: 0.9rem 1.2rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .comp-table td:first-child { font-weight: 500; color: var(--text-muted); text-align: left; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:nth-child(even) td { background: var(--green-mist); }
+  .highlight-col { background: rgba(76,175,120,0.08); font-weight: 500; color: var(--green-deep); }
+
+  /* ---- PRICING ---- */
+  #pricing { padding: 6rem 5%; background: var(--green-mist); text-align: center; }
+  .pricing-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 860px; margin: 3rem auto 0; }
+  .pricing-card {
+    background: white; border-radius: 20px; padding: 2.5rem 2rem;
+    border: 1.5px solid var(--border); text-align: left;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .pricing-card.featured {
+    border-color: var(--green-mid); background: var(--green-deep); color: white;
+    transform: scale(1.04);
+  }
+  .pricing-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 16px 48px rgba(45,122,79,0.15); }
+  .pricing-card.featured:hover { transform: translateY(-4px) scale(1.05); }
+  .pricing-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--green-light); color: white; font-size: 0.75rem; font-weight: 500;
+    padding: 4px 14px; border-radius: 50px; letter-spacing: 0.04em;
+  }
+  .pricing-tier { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; color: var(--green-mid); }
+  .pricing-card.featured .pricing-tier { color: var(--green-light); }
+  .pricing-price { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: var(--green-deep); margin-bottom: 0.3rem; }
+  .pricing-card.featured .pricing-price { color: white; }
+  .pricing-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .pricing-card.featured .pricing-sub { color: rgba(255,255,255,0.65); }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin-bottom: 2rem; }
+  .pricing-features li { font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem; }
+  .pricing-features li::before { content: '✓'; color: var(--green-light); font-weight: 700; flex-shrink: 0; }
+  .pricing-card.featured .pricing-features li { color: rgba(255,255,255,0.85); }
+  .pricing-btn {
+    width: 100%; padding: 0.85rem; border-radius: 50px; font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+    border: 1.5px solid var(--green-deep); background: transparent; color: var(--green-deep);
+  }
+  .pricing-btn:hover { background: var(--green-pale); }
+  .pricing-card.featured .pricing-btn { background: white; color: var(--green-deep); border-color: transparent; }
+  .pricing-card.featured .pricing-btn:hover { background: var(--green-pale); }
+
+  /* ---- SWOT ---- */
+  #swot { padding: 6rem 5%; }
+  .swot-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 3rem; }
+  .swot-card { border-radius: 16px; padding: 2rem; text-align: left; }
+  .swot-s { background: #e8f5ee; border-left: 4px solid var(--green-mid); }
+  .swot-w { background: #fff8e6; border-left: 4px solid #e6a817; }
+  .swot-o { background: #e6f3ff; border-left: 4px solid #2d7ab5; }
+  .swot-t { background: #fde8e8; border-left: 4px solid #c0392b; }
+  .swot-card h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 0.8rem; }
+  .swot-s h3 { color: var(--green-mid); }
+  .swot-w h3 { color: #b58200; }
+  .swot-o h3 { color: #1a5c8f; }
+  .swot-t h3 { color: #a93226; }
+  .swot-card p { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+  /* ---- FINANCIALS ---- */
+  #financials { padding: 6rem 5%; background: var(--green-deep); color: white; text-align: center; }
+  .fin-inner { max-width: 1000px; margin: 0 auto; }
+  .fin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+  .fin-card {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px; padding: 2rem;
+  }
+  .fin-label { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.6; margin-bottom: 0.7rem; }
+  .fin-val { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--green-light); }
+  .fin-desc { font-size: 0.78rem; opacity: 0.55; margin-top: 0.3rem; }
+  .revenue-chart { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 2rem; margin-top: 1rem; }
+  .chart-bars { display: flex; align-items: flex-end; gap: 1.5rem; height: 120px; justify-content: center; }
+  .chart-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .chart-bar { background: var(--green-light); border-radius: 6px 6px 0 0; width: 60px; transition: opacity 0.2s; }
+  .chart-bar:hover { opacity: 0.85; }
+  .chart-yr { font-size: 0.78rem; opacity: 0.6; }
+  .chart-rev { font-size: 0.75rem; color: var(--green-light); font-weight: 500; }
+
+  /* ---- TEAM ---- */
+  #team { padding: 6rem 5%; text-align: center; }
+  .team-inner { max-width: 900px; margin: 0 auto; }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .team-card { border-radius: 16px; padding: 2rem; background: white; border: 1px solid var(--border); text-align: center; transition: transform 0.2s; }
+  .team-card:hover { transform: translateY(-4px); }
+  .avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--green-pale); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--green-deep); font-weight: 700; }
+  .team-name { font-weight: 500; color: var(--green-deep); margin-bottom: 0.3rem; }
+  .team-role { font-size: 0.8rem; color: var(--green-mid); font-weight: 500; margin-bottom: 0.5rem; letter-spacing: 0.03em; }
+  .team-desc { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* ---- CTA ---- */
+  #cta {
+    padding: 8rem 5%;
+    text-align: center;
+    background: var(--green-mist);
+    position: relative; overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(76,175,120,0.15) 0%, transparent 70%);
+  }
+  .cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+  .cta-title { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); color: var(--green-deep); margin-bottom: 1rem; font-weight: 900; }
+  .cta-sub { color: var(--text-muted); margin-bottom: 2rem; }
+  .cta-form { display: flex; gap: 1rem; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+  .cta-input {
+    flex: 1; min-width: 220px; padding: 0.85rem 1.2rem; border-radius: 50px;
+    border: 1.5px solid var(--border); background: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem; outline: none; color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .cta-input:focus { border-color: var(--green-mid); }
+  .cta-submit {
+    background: var(--green-deep); color: white; border: none; cursor: pointer;
+    padding: 0.85rem 1.8rem; border-radius: 50px; font-size: 0.95rem; font-weight: 500;
+    font-family: 'DM Sans', sans-serif; transition: background 0.2s;
+  }
+  .cta-submit:hover { background: var(--green-mid); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--dark); color: white; padding: 3rem 5%;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { display: flex; align-items: center; gap: 10px; }
+  .footer-logo span { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: white; }
+  .footer-links { display: flex; gap: 2rem; }
+  .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--green-light); }
+  .footer-copy { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes floatLeaf {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(8deg); }
+  }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .swot-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .market-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    .bar-track { width: 100%; }
+    .comp-table { font-size: 0.8rem; }
+    .comp-table td, .comp-table th { padding: 0.6rem 0.8rem; }
+    .journey-steps::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 28C16 28 6 21 6 12C6 7.582 10.477 4 16 4C21.523 4 26 7.582 26 12C26 21 16 28 16 28Z" fill="#2d7a4f"/>
+      <path d="M16 28C16 28 8 20 10 13C12.5 9 16 8 16 8" stroke="#4caf78" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span>GreenLeaf</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#journey">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#financials">Investors</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get a Quote →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <!-- decorative leaves -->
+  <svg class="leaf-float" style="top:15%;left:8%;width:80px;" viewBox="0 0 80 80"><path d="M40 70C40 70 10 50 10 25C10 10 24 4 40 4C56 4 70 10 70 25C70 50 40 70 40 70Z" fill="#2d7a4f"/></svg>
+  <svg class="leaf-float" style="top:60%;right:6%;width:60px;" viewBox="0 0 80 80"><path d="M40 70C40 70 10 50 10 25C10 10 24 4 40 4C56 4 70 10 70 25C70 50 40 70 40 70Z" fill="#2d7a4f"/></svg>
+  <svg class="leaf-float" style="top:30%;right:15%;width:40px;" viewBox="0 0 80 80"><path d="M40 70C40 70 10 50 10 25C10 10 24 4 40 4C56 4 70 10 70 25C70 50 40 70 40 70Z" fill="#4caf78"/></svg>
+
+  <div class="hero-tag">🌿 Now Live in Vadodara, Gujarat</div>
+  <h1 class="hero-headline">
+    Your Garden.<br><em>Automated.</em><br>Finally.
+  </h1>
+  <p class="hero-sub">GreenLeaf SmartScape Systems brings intelligent IoT automation to urban balcony gardens — so your plants thrive even when you're travelling.</p>
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">Get Your Free Quote →</a>
+    <a href="#product" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">200+</div>
+      <div class="stat-label">Indian Plant Species</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">21 Days</div>
+      <div class="stat-label">Vacation Mode</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">62%</div>
+      <div class="stat-label">Gross Margin</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">₹0</div>
+      <div class="stat-label">Effort Required</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-eyebrow">The Problem</div>
+  <h2 class="section-title">India's Urban Gardens Are Dying</h2>
+  <p class="problem-desc">600 million Indians will live in cities by 2030. Balconies are the last green lungs — but modern professionals simply don't have the time.</p>
+  <div class="problem-cards">
+    <div class="problem-card reveal">
+      <div class="problem-icon">⏰</div>
+      <h3>Time Poverty</h3>
+      <p>Constant travel and packed schedules leave no room for consistent plant care.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">🌿</div>
+      <h3>High Plant Mortality</h3>
+      <p>Lack of knowledge about watering schedules and nutrients kills plants fast.</p>
+    </div>
+    <div class="problem-card reveal">
+      <div class="problem-icon">🏙️</div>
+      <h3>Shrinking Green Space</h3>
+      <p>Independent backyards are disappearing. Balconies are all we have left.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;margin-bottom:3rem;">
+    <div class="section-eyebrow" style="color:var(--green-mid);">The Hardware Ecosystem</div>
+    <h2 class="section-title reveal" style="color:var(--green-deep);">IoT-Enabled Intelligence<br>for Every Balcony</h2>
+  </div>
+  <div class="product-grid">
+    <div class="product-visual reveal">
+      <div class="hw-item">
+        <div class="hw-dot"></div>
+        <div>
+          <div class="hw-item-title">Smart Hub</div>
+          <div class="hw-item-desc">ESP32 unit with Wi-Fi + silent 12V submersible pump. Works offline too.</div>
+        </div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-dot" style="background:#2d7a4f;"></div>
+        <div>
+          <div class="hw-item-title">Remote Sensor Nodes</div>
+          <div class="hw-item-desc">Capacitive sensors measuring soil moisture, light, and temperature in real-time.</div>
+        </div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-dot" style="background:#1a4a2e;"></div>
+        <div>
+          <div class="hw-item-title">Micro-Drip System</div>
+          <div class="hw-item-desc">Food-grade ultra-thin silicone tubing delivering milliliter-accurate watering.</div>
+        </div>
+      </div>
+      <div class="hw-item">
+        <div class="hw-dot" style="background:#7ecfa0;"></div>
+        <div>
+          <div class="hw-item-title">Edge Computing</div>
+          <div class="hw-item-desc">Hub maintains your watering schedule even without an internet connection.</div>
+        </div>
+      </div>
+    </div>
+    <div class="product-content reveal">
+      <div class="section-eyebrow">Digital Plant Parent App</div>
+      <h2 class="section-title">Your Garden in<br>Your Pocket</h2>
+      <p>The GreenLeaf app connects to your hardware ecosystem and manages everything — no horticultural degree required.</p>
+      <ul class="feature-list">
+        <li>
+          <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          Database of 200+ Indian plant species with tailored care schedules
+        </li>
+        <li>
+          <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          Real-time soil health dashboard with live sensor readings
+        </li>
+        <li>
+          <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          Vacation Mode — automated rationing for up to 21 days
+        </li>
+        <li>
+          <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          AI Botanist suggestions powered by plant-scan technology
+        </li>
+        <li>
+          <span class="check"><svg viewBox="0 0 12 12" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          Automatic nutrient subscription refill reminders
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- APP FEATURES -->
+<section id="app">
+  <div class="section-eyebrow" style="color:var(--green-mid);">What's Included</div>
+  <h2 class="section-title reveal" style="color:var(--green-deep);">Everything Your Garden Needs</h2>
+  <div class="app-features">
+    <div class="app-card reveal">
+      <div class="app-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d7a4f" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+      </div>
+      <h3>Auto-Scheduling</h3>
+      <p>Set once, forget forever. Watering schedules adapt to weather and soil data.</p>
+    </div>
+    <div class="app-card reveal">
+      <div class="app-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d7a4f" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h3>Plant Profiles</h3>
+      <p>200+ species in our database, from mogra to microgreens — with care specifics.</p>
+    </div>
+    <div class="app-card reveal">
+      <div class="app-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d7a4f" stroke-width="2" stroke-linecap="round"><path d="M12 22V12M12 12C12 12 8 8 8 5a4 4 0 018 0c0 3-4 7-4 7z"/></svg>
+      </div>
+      <h3>Nutrient Tracking</h3>
+      <p>Calibrated NPK delivery with monthly subscription box auto-refills.</p>
+    </div>
+    <div class="app-card reveal">
+      <div class="app-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d7a4f" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <h3>Vacation Mode</h3>
+      <p>Leaving for 3 weeks? One tap activates automated rationing for up to 21 days.</p>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section id="journey">
+  <div class="journey-inner">
+    <div style="text-align:center;">
+      <div class="section-eyebrow" style="color:var(--green-mid);">The Process</div>
+      <h2 class="section-title reveal" style="color:var(--green-deep);">From Enquiry to<br>Autonomous Garden</h2>
+    </div>
+    <div class="journey-steps">
+      <div class="journey-step reveal">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Discovery</h3>
+          <p>Input your garden specs into our AR-enabled web app and get a custom quote in minutes — no salesperson required.</p>
+        </div>
+      </div>
+      <div class="journey-step reveal">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Site Survey</h3>
+          <p>A GreenLeaf technician visits to map your sunlight patterns, Wi-Fi coverage, and water access points. We create a "Pro Touch" blueprint specific to your space.</p>
+        </div>
+      </div>
+      <div class="journey-step reveal">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Custom Kit Assembly</h3>
+          <p>Our Vadodara hub assembles a bespoke hardware kit — hub pre-programmed, sensors calibrated, tubing cut to exact lengths for your garden layout.</p>
+        </div>
+      </div>
+      <div class="journey-step reveal">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>White-Glove Installation</h3>
+          <p>Our team handles the full setup of plumbing and electronics. Zero mess, zero headache. We leave only when your garden is live and running.</p>
+        </div>
+      </div>
+      <div class="journey-step reveal">
+        <div class="step-num" style="background:var(--green-light);">✓</div>
+        <div class="step-body">
+          <h3>Autonomous Growth — Forever</h3>
+          <p>24/7 monitoring with low-water alerts, seasonal adjustments, and automated nutrient subscription refills. Your garden just grows.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="market-inner">
+    <div class="section-eyebrow">Market Opportunity</div>
+    <h2 class="section-title reveal">A US$ 6 Billion Market<br>Waiting to Be Captured</h2>
+    <p style="opacity:0.7;max-width:560px;margin:0 auto;font-weight:300;">Rising AQI awareness and biophilic design trends in Tier-1 Indian cities are driving unprecedented demand for smart gardening solutions.</p>
+    <div class="market-bars reveal">
+      <div class="market-row">
+        <div class="market-label">TAM — Smart Home/Garden India</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+        <div class="market-val">US$ 6.0B</div>
+      </div>
+      <div class="market-row">
+        <div class="market-label">SAM — Urban Balcony Households</div>
+        <div class="bar-track"><div class="bar-fill" style="width:55%;background:rgba(76,175,120,0.8);"></div></div>
+        <div class="market-val">15 Million</div>
+      </div>
+      <div class="market-row">
+        <div class="market-label">SOM — 3-Year Target (Gujarat/MH)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:12%;background:rgba(76,175,120,0.5);"></div></div>
+        <div class="market-val">10,000 Units</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITIVE -->
+<section id="competitive">
+  <div class="comp-inner">
+    <div class="section-eyebrow" style="color:var(--green-mid);">Competitive Landscape</div>
+    <h2 class="section-title reveal" style="color:var(--green-deep);">The Only Zero-Effort Solution<br>Built for Urban India</h2>
+    <table class="comp-table reveal">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Ugaoo / NurseryLive</th>
+          <th>Barton Breeze</th>
+          <th class="highlight-col" style="color:white;">GreenLeaf Systems</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Automation</td>
+          <td>None (Manual)</td>
+          <td>High (Industrial)</td>
+          <td class="highlight-col">Smart Home IoT ✦</td>
+        </tr>
+        <tr>
+          <td>Target Environment</td>
+          <td>Generic Gardens</td>
+          <td>Hydroponic Farms</td>
+          <td class="highlight-col">Urban Balconies ✦</td>
+        </tr>
+        <tr>
+          <td>Support Model</td>
+          <td>None</td>
+          <td>Technical Only</td>
+          <td class="highlight-col">Nutrient Subscription ✦</td>
+        </tr>
+        <tr>
+          <td>User Difficulty</td>
+          <td>Medium / High</td>
+          <td>High (Complex)</td>
+          <td class="highlight-col">Zero Effort ✦</td>
+        </tr>
+        <tr>
+          <td>Indian Plant Database</td>
+          <td>Limited</td>
+          <td>None</td>
+          <td class="highlight-col">200+ Species ✦</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-eyebrow" style="color:var(--green-mid);">Pricing</div>
+  <h2 class="section-title reveal" style="color:var(--green-deep);">Simple, Transparent Pricing</h2>
+  <p style="color:var(--text-muted);max-width:480px;margin:0 auto;">One-time hardware + optional monthly subscription. No hidden costs.</p>
+  <div class="pricing-cards">
+    <div class="pricing-card reveal">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-price">₹4,999</div>
+      <div class="pricing-sub">One-time hardware kit</div>
+      <ul class="pricing-features">
+        <li>Smart Hub + 2 sensor nodes</li>
+        <li>Micro-drip for up to 4 plants</li>
+        <li>GreenLeaf app (free)</li>
+        <li>DIY installation guide</li>
+        <li>1-year hardware warranty</li>
+      </ul>
+      <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Started</button>
+    </div>
+    <div class="pricing-card featured reveal">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-tier">Pro</div>
+      <div class="pricing-price">₹11,999</div>
+      <div class="pricing-sub">Kit + White-Glove Install</div>
+      <ul class="pricing-features">
+        <li>Smart Hub + 6 sensor nodes</li>
+        <li>Micro-drip for up to 15 plants</li>
+        <li>Professional site survey</li>
+        <li>White-glove installation</li>
+        <li>Monthly nutrient box (₹599/mo)</li>
+        <li>24/7 monitoring + alerts</li>
+        <li>2-year full warranty</li>
+      </ul>
+      <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Your Quote →</button>
+    </div>
+    <div class="pricing-card reveal">
+      <div class="pricing-tier">Subscription</div>
+      <div class="pricing-price">₹499<span style="font-size:1rem;font-weight:400;">/mo</span></div>
+      <div class="pricing-sub">Add-on to any hardware plan</div>
+      <ul class="pricing-features">
+        <li>Monthly NPK nutrient box</li>
+        <li>Organic pest prevention</li>
+        <li>Auto-calibrated to your plants</li>
+        <li>Pause or cancel anytime</li>
+        <li>Free delivery in Gujarat</li>
+      </ul>
+      <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Add to Plan</button>
+    </div>
+  </div>
+</section>
+
+<!-- SWOT -->
+<section id="swot">
+  <div class="swot-inner">
+    <div class="section-eyebrow" style="color:var(--green-mid);">SWOT</div>
+    <h2 class="section-title reveal" style="color:var(--green-deep);">Built to Win, Eyes Wide Open</h2>
+    <div class="swot-grid">
+      <div class="swot-card swot-s reveal">
+        <h3>Strengths</h3>
+        <p>First-mover in retrofittable IoT gardening for Indian apartments. High-margin subscription model. Lean, agile founding team. DPIIT registered startup.</p>
+      </div>
+      <div class="swot-card swot-w reveal">
+        <h3>Weaknesses</h3>
+        <p>Dependence on third-party IoT components. High initial consumer education required in a market new to smart gardening.</p>
+      </div>
+      <div class="swot-card swot-o reveal">
+        <h3>Opportunities</h3>
+        <p>Booming luxury real estate market. Alexa & Google Home integration potential. B2B pre-installation deals with premium developers.</p>
+      </div>
+      <div class="swot-card swot-t reveal">
+        <h3>Threats</h3>
+        <p>Cheap non-smart drip kits as low-cost alternatives. Global microchip supply chain disruptions impacting hardware availability.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCIALS -->
+<section id="financials">
+  <div class="fin-inner">
+    <div class="section-eyebrow">For Investors</div>
+    <h2 class="section-title reveal">Strong Unit Economics,<br>Compounding Growth</h2>
+    <div class="fin-grid reveal">
+      <div class="fin-card">
+        <div class="fin-label">Break-even</div>
+        <div class="fin-val">19 Mo</div>
+        <div class="fin-desc">From launch</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-label">Gross Margin (Y3)</div>
+        <div class="fin-val">54%</div>
+        <div class="fin-desc">Blended hardware + sub</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-label">Seed Capital Ask</div>
+        <div class="fin-val">₹32L</div>
+        <div class="fin-desc">For Gujarat rollout</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-label">Sub Gross Margin</div>
+        <div class="fin-val">62%</div>
+        <div class="fin-desc">On nutrient boxes</div>
+      </div>
+    </div>
+    <div class="revenue-chart reveal">
+      <p style="font-size:0.8rem;opacity:0.5;margin-bottom:1.5rem;letter-spacing:0.06em;text-transform:uppercase;">Revenue Projection</p>
+      <div class="chart-bars">
+        <div class="chart-bar-wrap">
+          <div class="chart-rev">₹15.2L</div>
+          <div class="chart-bar" style="height:30px;"></div>
+          <div class="chart-yr">FY26</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-rev">₹74.6L</div>
+          <div class="chart-bar" style="height:75px;"></div>
+          <div class="chart-yr">FY27</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="chart-rev">₹2.48Cr</div>
+          <div class="chart-bar" style="height:120px;"></div>
+          <div class="chart-yr">FY28</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="team-inner">
+    <div class="section-eyebrow" style="color:var(--green-mid);">The Founding Team</div>
+    <h2 class="section-title reveal" style="color:var(--green-deep);">Built by People Who<br>Care About Plants (and Profits)</h2>
+    <div class="team-grid">
+      <div class="team-card reveal">
+        <div class="avatar">SD</div>
+        <div class="team-name">Shivam Desai</div>
+        <div class="team-role">CEO — Strategy & Fundraising</div>
+        <div class="team-desc">Drives business vision, investor relations, and strategic growth.</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="avatar">PN</div>
+        <div class="team-name">Piyush Nath</div>
+        <div class="team-role">CTO — IoT & App Dev</div>
+        <div class="team-desc">Architects the hardware ecosystem and GreenLeaf mobile platform.</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="avatar">IB</div>
+        <div class="team-name">Ishwar Brahmkhatri</div>
+        <div class="team-role">Marketing — Brand & UX</div>
+        <div class="team-desc">Shapes the GreenLeaf identity, customer experience, and growth marketing.</div>
+      </div>
+      <div class="team-card reveal">
+        <div class="avatar">PP</div>
+        <div class="team-name">Pujan Patel</div>
+        <div class="team-role">Ops — Supply Chain & Finance</div>
+        <div class="team-desc">Manages Vadodara hub operations, procurement, and financial planning.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <div class="section-eyebrow" style="color:var(--green-mid);">Get Started</div>
+    <h2 class="cta-title reveal">Your Plants Deserve Better.<br>So Do You.</h2>
+    <p class="cta-sub reveal">Get a free custom quote for your balcony. Our team will reach out within 24 hours.</p>
+    <div class="cta-form reveal">
+      <input type="text" class="cta-input" placeholder="Your phone or email" id="lead-input">
+      <button class="cta-submit" onclick="handleSubmit()">Get Free Quote</button>
+    </div>
+    <p style="font-size:0.78rem;color:var(--text-muted);margin-top:1rem;" class="reveal">Currently serving Vadodara & Surat. Ahmedabad launching soon.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <path d="M16 28C16 28 6 21 6 12C6 7.582 10.477 4 16 4C21.523 4 26 7.582 26 12C26 21 16 28 16 28Z" fill="#4caf78"/>
+    </svg>
+    <span>GreenLeaf SmartScape</span>
+  </div>
+  <div class="footer-links">
+    <a href="#product">Product</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#team">Team</a>
+    <a href="#cta">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 GreenLeaf SmartScape Systems LLP, Vadodara, Gujarat. DPIIT Registered.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Nav shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.boxShadow = window.scrollY > 20 ? '0 2px 20px rgba(0,0,0,0.08)' : 'none';
+  });
+
+  // CTA submit
+  function handleSubmit() {
+    const val = document.getElementById('lead-input').value.trim();
+    if (!val) { document.getElementById('lead-input').focus(); return; }
+    document.querySelector('.cta-form').innerHTML = '<div style="background:var(--green-pale);color:var(--green-deep);padding:1rem 2rem;border-radius:50px;font-weight:500;border:1px solid rgba(45,122,79,0.2);">🌿 We\'ll reach out within 24 hours — your garden is about to get smarter!</div>';
+  }
+</script>
+</body>
+</html>
