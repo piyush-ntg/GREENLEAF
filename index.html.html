@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenLeaf SmartScape Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --g1:#00ff88;--g2:#00cc66;--g3:#009944;
+  --dark:#020d07;--dark2:#041a0c;--dark3:#071f10;
+  --text:#e8f5ee;--muted:#6aad82;--border:rgba(0,255,136,0.12);
+  --glow:0 0 20px rgba(0,255,136,0.3);--glow2:0 0 40px rgba(0,255,136,0.15);
+}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--dark);color:var(--text);
+  overflow-x:hidden;font-size:16px;line-height:1.7;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+#cursor{
+  position:fixed;width:12px;height:12px;background:var(--g1);
+  border-radius:50%;pointer-events:none;z-index:9999;
+  transition:transform 0.1s;mix-blend-mode:screen;
+  box-shadow:0 0 20px var(--g1),0 0 40px rgba(0,255,136,0.5);
+}
+#cursor-ring{
+  position:fixed;width:36px;height:36px;border:1px solid rgba(0,255,136,0.4);
+  border-radius:50%;pointer-events:none;z-index:9998;
+  transition:all 0.15s ease;
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 5%;
+  background:rgba(2,13,7,0.7);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;position:relative;}
+.nav-logo-icon svg{width:100%;height:100%;}
+.nav-logo span{
+  font-family:'Playfair Display',serif;font-size:1.4rem;
+  color:var(--g1);font-weight:700;
+  text-shadow:0 0 20px rgba(0,255,136,0.5);
+}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{
+  text-decoration:none;color:var(--muted);font-size:0.875rem;
+  font-weight:500;transition:color 0.2s,text-shadow 0.2s;letter-spacing:0.03em;
+}
+.nav-links a:hover{color:var(--g1);text-shadow:0 0 12px rgba(0,255,136,0.6);}
+.nav-cta{
+  background:transparent;color:var(--g1);border:1px solid var(--g1);
+  cursor:pointer;padding:0.6rem 1.4rem;border-radius:50px;
+  font-size:0.875rem;font-weight:500;font-family:'DM Sans',sans-serif;
+  transition:all 0.3s;text-decoration:none;
+  box-shadow:0 0 12px rgba(0,255,136,0.2);
+}
+.nav-cta:hover{background:var(--g1);color:var(--dark);box-shadow:var(--glow);}
+
+/* THREE.JS CANVAS */
+#bg-canvas{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:0;pointer-events:none;
+}
+
+/* HERO */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:7rem 5% 4rem;
+  position:relative;z-index:1;
+}
+.hero-tag{
+  display:inline-block;margin-bottom:1.5rem;
+  background:rgba(0,255,136,0.08);color:var(--g1);
+  padding:0.4rem 1.2rem;border-radius:50px;font-size:0.78rem;
+  border:1px solid rgba(0,255,136,0.25);letter-spacing:0.1em;
+  text-transform:uppercase;font-weight:500;
+  animation:fadeUp 0.8s ease both;
+  box-shadow:0 0 20px rgba(0,255,136,0.1);
+}
+.hero-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3rem,7vw,6rem);
+  font-weight:900;line-height:1.05;
+  max-width:900px;margin-bottom:1.5rem;
+  animation:fadeUp 0.9s 0.1s ease both;
+  color:var(--text);
+}
+.hero-headline .glow-word{
+  color:var(--g1);
+  text-shadow:0 0 30px rgba(0,255,136,0.6),0 0 60px rgba(0,255,136,0.3);
+}
+.hero-headline em{font-style:italic;color:var(--g2);}
+.hero-sub{
+  font-size:1.1rem;color:var(--muted);max-width:560px;
+  margin-bottom:2.5rem;font-weight:300;
+  animation:fadeUp 1s 0.2s ease both;
+}
+.hero-actions{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 1.1s 0.3s ease both;
+}
+.btn-primary{
+  background:var(--g1);color:var(--dark);padding:0.9rem 2.2rem;
+  border-radius:50px;text-decoration:none;font-weight:600;font-size:1rem;
+  transition:all 0.3s;display:inline-flex;align-items:center;gap:0.5rem;
+  box-shadow:0 0 30px rgba(0,255,136,0.4);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 50px rgba(0,255,136,0.6);}
+.btn-secondary{
+  background:transparent;color:var(--g1);padding:0.9rem 2.2rem;
+  border-radius:50px;text-decoration:none;font-weight:500;font-size:1rem;
+  border:1px solid rgba(0,255,136,0.4);transition:all 0.3s;
+}
+.btn-secondary:hover{background:rgba(0,255,136,0.08);border-color:var(--g1);box-shadow:var(--glow);}
+.hero-stats{
+  display:flex;gap:3.5rem;margin-top:4.5rem;
+  animation:fadeUp 1.2s 0.4s ease both;flex-wrap:wrap;justify-content:center;
+}
+.stat-item{text-align:center;}
+.stat-num{
+  font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;
+  color:var(--g1);text-shadow:0 0 20px rgba(0,255,136,0.5);
+}
+.stat-label{font-size:0.78rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;}
+
+/* SCROLL INDICATOR */
+.scroll-ind{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+  color:var(--muted);font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
+  animation:fadeUp 1.5s 0.8s ease both;
+}
+.scroll-line{
+  width:1px;height:50px;background:linear-gradient(to bottom,var(--g1),transparent);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+
+/* SECTIONS */
+section{position:relative;z-index:1;}
+
+.section-inner{max-width:1100px;margin:0 auto;padding:6rem 5%;}
+.section-eyebrow{
+  font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--g1);margin-bottom:1rem;font-weight:500;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3.2rem);font-weight:700;
+  margin-bottom:1.5rem;color:var(--text);
+}
+
+/* PROBLEM */
+#problem{background:linear-gradient(180deg,var(--dark) 0%,var(--dark2) 100%);}
+#problem .section-inner{text-align:center;}
+.problem-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.glass-card{
+  background:rgba(0,255,136,0.03);
+  border:1px solid var(--border);
+  border-radius:20px;padding:2rem;
+  transition:all 0.4s;
+  transform-style:preserve-3d;
+  position:relative;overflow:hidden;
+}
+.glass-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(0,255,136,0.06) 0%,transparent 60%);
+  opacity:0;transition:opacity 0.3s;border-radius:20px;
+}
+.glass-card:hover::before{opacity:1;}
+.glass-card:hover{
+  border-color:rgba(0,255,136,0.3);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(0,255,136,0.1);
+  transform:translateY(-8px) rotateX(2deg);
+}
+.card-icon{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;margin-bottom:1.2rem;
+  box-shadow:0 0 20px rgba(0,255,136,0.1);
+}
+.glass-card h3{font-size:1.05rem;font-weight:500;margin-bottom:0.5rem;color:var(--text);}
+.glass-card p{font-size:0.875rem;color:var(--muted);line-height:1.6;}
+
+/* PRODUCT */
+#product{background:var(--dark2);}
+.product-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;
+}
+.hw-stack{display:flex;flex-direction:column;gap:1rem;}
+.hw-item{
+  background:rgba(0,255,136,0.03);border:1px solid var(--border);
+  border-radius:14px;padding:1.2rem 1.5rem;
+  display:flex;align-items:center;gap:1rem;
+  transition:all 0.3s;
+}
+.hw-item:hover{
+  border-color:rgba(0,255,136,0.3);
+  transform:translateX(6px);
+  box-shadow:0 0 30px rgba(0,255,136,0.08);
+}
+.hw-pulse{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--g1);flex-shrink:0;
+  box-shadow:0 0 10px var(--g1);
+  animation:pulse 2s ease-in-out infinite;
+}
+.hw-pulse:nth-child(1){animation-delay:0s;}
+.hw-item:nth-child(2) .hw-pulse{animation-delay:0.5s;}
+.hw-item:nth-child(3) .hw-pulse{animation-delay:1s;}
+.hw-item:nth-child(4) .hw-pulse{animation-delay:1.5s;}
+.hw-item-title{font-weight:500;font-size:0.95rem;color:var(--g1);}
+.hw-item-desc{font-size:0.82rem;color:var(--muted);}
+.product-text .section-title{text-align:left;}
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:0.9rem;margin-top:1.5rem;}
+.feature-list li{
+  display:flex;align-items:flex-start;gap:0.75rem;
+  font-size:0.9rem;color:var(--muted);
+}
+.feat-check{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+  box-shadow:0 0 8px rgba(0,255,136,0.15);
+}
+.feat-check svg{width:10px;height:10px;stroke:var(--g1);}
+
+/* 3D CARDS SECTION */
+#features3d{background:var(--dark);}
+#features3d .section-inner{text-align:center;}
+.cards-3d-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1.5rem;margin-top:3rem;perspective:1000px;
+}
+.card-3d{
+  background:linear-gradient(135deg,rgba(0,255,136,0.05),rgba(0,0,0,0.3));
+  border:1px solid var(--border);border-radius:20px;padding:2rem;
+  transition:all 0.5s cubic-bezier(0.23,1,0.32,1);
+  transform-style:preserve-3d;cursor:default;
+  position:relative;overflow:hidden;
+}
+.card-3d::after{
+  content:'';position:absolute;top:-50%;left:-50%;
+  width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent,rgba(0,255,136,0.05),transparent);
+  animation:rotateBg 6s linear infinite;opacity:0;
+  transition:opacity 0.3s;
+}
+.card-3d:hover::after{opacity:1;}
+.card-3d:hover{
+  transform:rotateY(-8deg) rotateX(4deg) translateZ(20px);
+  border-color:rgba(0,255,136,0.35);
+  box-shadow:20px 20px 60px rgba(0,0,0,0.6),0 0 30px rgba(0,255,136,0.1);
+}
+.card-3d-icon{
+  font-size:2.5rem;margin-bottom:1rem;
+  filter:drop-shadow(0 0 10px rgba(0,255,136,0.4));
+}
+.card-3d h3{font-size:1rem;font-weight:500;color:var(--text);margin-bottom:0.5rem;}
+.card-3d p{font-size:0.83rem;color:var(--muted);}
+
+/* JOURNEY */
+#journey{background:var(--dark2);}
+.journey-steps{position:relative;margin-top:3rem;}
+.journey-line{
+  position:absolute;left:28px;top:28px;bottom:0;
+  width:1px;
+  background:linear-gradient(to bottom,var(--g1),rgba(0,255,136,0.1));
+}
+.journey-step{
+  display:flex;gap:2rem;align-items:flex-start;
+  padding-bottom:2.5rem;position:relative;z-index:1;
+}
+.step-orb{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--dark);border:1px solid var(--g1);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.2rem;
+  font-weight:700;color:var(--g1);flex-shrink:0;
+  box-shadow:0 0 20px rgba(0,255,136,0.3),inset 0 0 20px rgba(0,255,136,0.05);
+  transition:all 0.3s;
+}
+.journey-step:hover .step-orb{
+  background:rgba(0,255,136,0.1);
+  box-shadow:0 0 40px rgba(0,255,136,0.5);
+}
+.step-body{padding-top:0.7rem;}
+.step-body h3{font-size:1.05rem;font-weight:500;color:var(--g1);margin-bottom:0.4rem;}
+.step-body p{font-size:0.875rem;color:var(--muted);max-width:500px;}
+
+/* MARKET */
+#market{background:var(--dark);}
+#market .section-inner{text-align:center;}
+.market-bars{display:flex;flex-direction:column;gap:2rem;margin-top:3rem;text-align:left;}
+.market-row{display:grid;grid-template-columns:240px 1fr 140px;align-items:center;gap:1.5rem;}
+.market-label{font-size:0.875rem;color:var(--muted);}
+.bar-track{
+  background:rgba(0,255,136,0.06);border-radius:50px;
+  height:10px;overflow:hidden;border:1px solid rgba(0,255,136,0.1);
+}
+.bar-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(to right,var(--g3),var(--g1));
+  box-shadow:0 0 10px rgba(0,255,136,0.4);
+  width:0;transition:width 1.5s cubic-bezier(0.23,1,0.32,1);
+}
+.market-val{
+  font-family:'Playfair Display',serif;font-size:1.1rem;
+  color:var(--g1);font-weight:700;text-align:right;
+  text-shadow:0 0 12px rgba(0,255,136,0.4);
+}
+
+/* PRICING */
+#pricing{background:var(--dark2);}
+#pricing .section-inner{text-align:center;}
+.pricing-cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.pricing-card{
+  background:rgba(0,255,136,0.02);border:1px solid var(--border);
+  border-radius:24px;padding:2.5rem 2rem;text-align:left;
+  transition:all 0.4s;position:relative;overflow:hidden;
+}
+.pricing-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(0,255,136,0.3),transparent);
+}
+.pricing-card.featured{
+  border-color:var(--g1);
+  background:linear-gradient(135deg,rgba(0,255,136,0.08),rgba(0,204,102,0.04));
+  box-shadow:0 0 40px rgba(0,255,136,0.15),inset 0 0 40px rgba(0,255,136,0.03);
+}
+.pricing-card:hover{transform:translateY(-6px);}
+.pricing-card.featured:hover{transform:translateY(-8px);box-shadow:0 0 60px rgba(0,255,136,0.25);}
+.featured-badge{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--g1);color:var(--dark);font-size:0.72rem;
+  font-weight:600;padding:4px 16px;border-radius:0 0 10px 10px;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+.pricing-tier{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:1rem;font-weight:500;}
+.pricing-card.featured .pricing-tier{color:var(--g1);}
+.pricing-price{
+  font-family:'Playfair Display',serif;font-size:2.6rem;
+  font-weight:700;color:var(--text);margin-bottom:0.3rem;
+}
+.pricing-card.featured .pricing-price{
+  color:var(--g1);text-shadow:0 0 20px rgba(0,255,136,0.4);
+}
+.pricing-sub{font-size:0.82rem;color:var(--muted);margin-bottom:1.5rem;}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:0.7rem;margin-bottom:2rem;}
+.pricing-features li{
+  font-size:0.875rem;display:flex;align-items:center;gap:0.6rem;color:var(--muted);
+}
+.pricing-features li::before{content:'✦';color:var(--g1);font-size:0.7rem;flex-shrink:0;}
+.pricing-btn{
+  width:100%;padding:0.85rem;border-radius:50px;font-size:0.9rem;
+  font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all 0.3s;border:1px solid rgba(0,255,136,0.3);
+  background:transparent;color:var(--g1);
+}
+.pricing-btn:hover{background:rgba(0,255,136,0.1);box-shadow:0 0 20px rgba(0,255,136,0.2);}
+.pricing-card.featured .pricing-btn{
+  background:var(--g1);color:var(--dark);border-color:transparent;
+  font-weight:600;box-shadow:0 0 30px rgba(0,255,136,0.3);
+}
+.pricing-card.featured .pricing-btn:hover{box-shadow:0 0 50px rgba(0,255,136,0.5);}
+
+/* FINANCIALS */
+#financials{background:var(--dark);}
+#financials .section-inner{text-align:center;}
+.fin-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1.5rem;margin:3rem 0;
+}
+.fin-card{
+  background:rgba(0,255,136,0.03);border:1px solid var(--border);
+  border-radius:16px;padding:2rem;transition:all 0.3s;
+}
+.fin-card:hover{
+  border-color:rgba(0,255,136,0.3);
+  box-shadow:0 0 30px rgba(0,255,136,0.08);transform:translateY(-4px);
+}
+.fin-label{font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:0.7rem;}
+.fin-val{
+  font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;
+  color:var(--g1);text-shadow:0 0 15px rgba(0,255,136,0.4);
+}
+.fin-desc{font-size:0.75rem;color:var(--muted);margin-top:0.3rem;}
+.rev-chart{
+  background:rgba(0,255,136,0.02);border:1px solid var(--border);
+  border-radius:20px;padding:2.5rem;margin-top:1rem;
+}
+.chart-bars{display:flex;align-items:flex-end;gap:2rem;height:140px;justify-content:center;}
+.chart-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:0.6rem;}
+.chart-bar{
+  border-radius:6px 6px 0 0;width:70px;
+  background:linear-gradient(to top,var(--g3),var(--g1));
+  box-shadow:0 0 20px rgba(0,255,136,0.3);
+  transition:height 1.5s cubic-bezier(0.23,1,0.32,1);
+  height:0;
+}
+.chart-yr{font-size:0.78rem;color:var(--muted);}
+.chart-rev{font-size:0.78rem;color:var(--g1);font-weight:500;}
+
+/* TEAM */
+#team{background:var(--dark2);}
+#team .section-inner{text-align:center;}
+.team-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1.5rem;margin-top:3rem;
+}
+.team-card{
+  background:rgba(0,255,136,0.02);border:1px solid var(--border);
+  border-radius:20px;padding:2rem;text-align:center;
+  transition:all 0.4s;
+}
+.team-card:hover{
+  border-color:rgba(0,255,136,0.3);
+  transform:translateY(-6px) rotateY(3deg);
+  box-shadow:0 20px 50px rgba(0,0,0,0.5),0 0 30px rgba(0,255,136,0.08);
+}
+.avatar-glow{
+  width:68px;height:68px;border-radius:50%;
+  background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);
+  margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--g1);font-weight:700;
+  box-shadow:0 0 20px rgba(0,255,136,0.2);
+}
+.team-name{font-weight:500;color:var(--text);margin-bottom:0.3rem;}
+.team-role{font-size:0.78rem;color:var(--g1);margin-bottom:0.5rem;font-weight:500;}
+.team-desc{font-size:0.82rem;color:var(--muted);}
+
+/* SWOT */
+#swot{background:var(--dark);}
+#swot .section-inner{text-align:center;}
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem;}
+.swot-card{
+  border-radius:20px;padding:2rem;text-align:left;
+  border:1px solid;transition:all 0.3s;
+}
+.swot-card:hover{transform:translateY(-4px);}
+.swot-s{border-color:rgba(0,255,136,0.25);background:rgba(0,255,136,0.04);}
+.swot-w{border-color:rgba(255,200,0,0.2);background:rgba(255,200,0,0.03);}
+.swot-o{border-color:rgba(0,150,255,0.2);background:rgba(0,150,255,0.03);}
+.swot-t{border-color:rgba(255,80,80,0.2);background:rgba(255,80,80,0.03);}
+.swot-card h3{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.8rem;}
+.swot-s h3{color:var(--g1);}
+.swot-w h3{color:#ffc800;}
+.swot-o h3{color:#0096ff;}
+.swot-t h3{color:#ff5050;}
+.swot-card p{font-size:0.875rem;color:var(--muted);line-height:1.6;}
+
+/* CTA */
+#cta{
+  background:var(--dark2);
+  position:relative;overflow:hidden;
+}
+#cta .section-inner{text-align:center;}
+.cta-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,255,136,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cta-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3.5rem);color:var(--text);
+  margin-bottom:1rem;font-weight:900;
+}
+.cta-title span{
+  color:var(--g1);
+  text-shadow:0 0 30px rgba(0,255,136,0.5);
+}
+.cta-sub{color:var(--muted);margin-bottom:2.5rem;font-size:1rem;}
+.cta-form{display:flex;gap:1rem;max-width:480px;margin:0 auto;flex-wrap:wrap;justify-content:center;}
+.cta-input{
+  flex:1;min-width:220px;padding:0.9rem 1.4rem;border-radius:50px;
+  border:1px solid rgba(0,255,136,0.2);
+  background:rgba(0,255,136,0.04);
+  font-family:'DM Sans',sans-serif;font-size:0.95rem;
+  color:var(--text);outline:none;transition:all 0.3s;
+}
+.cta-input::placeholder{color:var(--muted);}
+.cta-input:focus{border-color:var(--g1);box-shadow:0 0 20px rgba(0,255,136,0.1);}
+.cta-submit{
+  background:var(--g1);color:var(--dark);border:none;cursor:pointer;
+  padding:0.9rem 1.8rem;border-radius:50px;font-size:0.95rem;font-weight:600;
+  font-family:'DM Sans',sans-serif;transition:all 0.3s;
+  box-shadow:0 0 30px rgba(0,255,136,0.3);
+}
+.cta-submit:hover{box-shadow:0 0 50px rgba(0,255,136,0.5);transform:translateY(-2px);}
+
+/* FOOTER */
+footer{
+  background:var(--dark);border-top:1px solid var(--border);
+  padding:2.5rem 5%;display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.footer-logo{display:flex;align-items:center;gap:10px;}
+.footer-logo span{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--g1);}
+.footer-links{display:flex;gap:2rem;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:0.82rem;transition:color 0.2s;}
+.footer-links a:hover{color:var(--g1);}
+.footer-copy{font-size:0.75rem;color:rgba(106,173,130,0.5);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 8px var(--g1);opacity:1;}
+  50%{box-shadow:0 0 20px var(--g1);opacity:0.7;}
+}
+@keyframes scrollPulse{
+  0%,100%{opacity:0.3;transform:scaleY(0.8);}
+  50%{opacity:1;transform:scaleY(1);}
+}
+@keyframes rotateBg{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(0deg);}
+  50%{transform:translateY(-15px) rotate(5deg);}
+}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.reveal-left.visible{opacity:1;transform:translateX(0);}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.reveal-right.visible{opacity:1;transform:translateX(0);}
+
+@media(max-width:768px){
+  .product-grid{grid-template-columns:1fr;}
+  .swot-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .market-row{grid-template-columns:1fr;gap:0.5rem;}
+  .hero-stats{gap:2rem;}
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M18 32C18 32 5 23 5 13C5 7.477 10.924 4 18 4C25.076 4 31 7.477 31 13C31 23 18 32 18 32Z" fill="rgba(0,255,136,0.15)" stroke="#00ff88" stroke-width="1"/>
+        <path d="M18 32C18 32 10 22 13 14C15 8 18 7 18 7" stroke="#00cc66" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span>GreenLeaf</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#journey">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#financials">Investors</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get a Quote →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">🌿 Now Live · Vadodara, Gujarat · DPIIT Registered</div>
+  <h1 class="hero-headline">
+    Your Garden.<br>
+    <span class="glow-word">Automated.</span><br>
+    <em>Finally.</em>
+  </h1>
+  <p class="hero-sub">GreenLeaf SmartScape brings intelligent IoT automation to urban balcony gardens — so your plants thrive even while you travel.</p>
+  <div class="hero-actions">
+    <a href="#cta" class="btn-primary">Get Your Free Quote →</a>
+    <a href="#product" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">Plant Species</div></div>
+    <div class="stat-item"><div class="stat-num">21 Days</div><div class="stat-label">Vacation Mode</div></div>
+    <div class="stat-item"><div class="stat-num">62%</div><div class="stat-label">Gross Margin</div></div>
+    <div class="stat-item"><div class="stat-num">₹0</div><div class="stat-label">Effort Required</div></div>
+  </div>
+  <div class="scroll-ind">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">The Problem</div>
+    <h2 class="section-title reveal">India's Urban Gardens<br>Are Dying</h2>
+    <p class="reveal" style="color:var(--muted);max-width:560px;margin:0 auto 0;">600 million Indians will live in cities by 2030. Balconies are the last green lungs — but modern professionals simply don't have the time.</p>
+    <div class="problem-cards">
+      <div class="glass-card reveal">
+        <div class="card-icon">⏰</div>
+        <h3>Time Poverty</h3>
+        <p>Constant travel and packed schedules leave no room for consistent plant care.</p>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">🌿</div>
+        <h3>High Plant Mortality</h3>
+        <p>Lack of knowledge about watering and nutrients kills most urban plants within months.</p>
+      </div>
+      <div class="glass-card reveal">
+        <div class="card-icon">🏙️</div>
+        <h3>Shrinking Green Space</h3>
+        <p>Independent backyards are disappearing. Balconies are all that remains.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <div class="section-inner">
+    <div class="product-grid">
+      <div class="hw-stack reveal-left">
+        <div style="margin-bottom:1.5rem;">
+          <div class="section-eyebrow">Hardware Ecosystem</div>
+          <h2 class="section-title" style="text-align:left;">IoT Intelligence<br>for Every Balcony</h2>
+        </div>
+        <div class="hw-item">
+          <div class="hw-pulse"></div>
+          <div><div class="hw-item-title">Smart Hub</div><div class="hw-item-desc">ESP32 unit with Wi-Fi + silent 12V submersible pump. Works offline.</div></div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-pulse"></div>
+          <div><div class="hw-item-title">Remote Sensor Nodes</div><div class="hw-item-desc">Capacitive sensors measuring soil moisture, light, and temperature.</div></div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-pulse"></div>
+          <div><div class="hw-item-title">Micro-Drip System</div><div class="hw-item-desc">Food-grade ultra-thin silicone tubing for milliliter-accurate watering.</div></div>
+        </div>
+        <div class="hw-item">
+          <div class="hw-pulse"></div>
+          <div><div class="hw-item-title">Edge Computing</div><div class="hw-item-desc">Maintains your schedule even without an internet connection.</div></div>
+        </div>
+      </div>
+      <div class="product-text reveal-right">
+        <div class="section-eyebrow">Digital Plant Parent App</div>
+        <h2 class="section-title" style="text-align:left;">Your Garden<br>in Your Pocket</h2>
+        <p style="color:var(--muted);margin-bottom:0.5rem;">The GreenLeaf app connects to your hardware and manages everything autonomously.</p>
+        <ul class="feature-list">
+          <li><span class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></span>200+ Indian plant species with tailored care schedules</li>
+          <li><span class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></span>Real-time soil health dashboard with live sensor data</li>
+          <li><span class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></span>Vacation Mode — automated rationing for up to 21 days</li>
+          <li><span class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></span>AI Botanist scan-and-suggest technology</li>
+          <li><span class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></span>Auto nutrient subscription refills via monthly box</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D FEATURE CARDS -->
+<section id="features3d">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Everything Included</div>
+    <h2 class="section-title reveal">Built for Zero Effort</h2>
+    <div class="cards-3d-grid">
+      <div class="card-3d reveal"><div class="card-3d-icon">⚡</div><h3>Auto-Scheduling</h3><p>Set once, forget forever. Adapts to weather and soil data automatically.</p></div>
+      <div class="card-3d reveal"><div class="card-3d-icon">🌱</div><h3>Plant Profiles</h3><p>200+ species from mogra to microgreens with full care specifics.</p></div>
+      <div class="card-3d reveal"><div class="card-3d-icon">💧</div><h3>Nutrient Tracking</h3><p>Calibrated NPK delivery with monthly subscription box auto-refills.</p></div>
+      <div class="card-3d reveal"><div class="card-3d-icon">✈️</div><h3>Vacation Mode</h3><p>One tap activates automated rationing for up to 21 days.</p></div>
+      <div class="card-3d reveal"><div class="card-3d-icon">📱</div><h3>Live Dashboard</h3><p>Real-time soil, light, and temperature monitoring from anywhere.</p></div>
+      <div class="card-3d reveal"><div class="card-3d-icon">🔔</div><h3>Smart Alerts</h3><p>Low water, pest risk, and nutrient alerts before problems occur.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY -->
+<section id="journey">
+  <div class="section-inner">
+    <div style="text-align:center;">
+      <div class="section-eyebrow reveal">The Process</div>
+      <h2 class="section-title reveal">From Enquiry to<br>Autonomous Garden</h2>
+    </div>
+    <div class="journey-steps">
+      <div class="journey-line"></div>
+      <div class="journey-step reveal"><div class="step-orb">1</div><div class="step-body"><h3>Discovery</h3><p>Input your garden specs into our AR-enabled web app and get a custom quote instantly.</p></div></div>
+      <div class="journey-step reveal"><div class="step-orb">2</div><div class="step-body"><h3>Site Survey</h3><p>A GreenLeaf technician maps your sunlight, Wi-Fi, and water points for a precise blueprint.</p></div></div>
+      <div class="journey-step reveal"><div class="step-orb">3</div><div class="step-body"><h3>Custom Kit Assembly</h3><p>Our Vadodara hub assembles your bespoke kit — sensors calibrated, tubing cut to exact lengths.</p></div></div>
+      <div class="journey-step reveal"><div class="step-orb">4</div><div class="step-body"><h3>White-Glove Installation</h3><p>Full setup of plumbing and electronics. Zero mess. We leave only when your garden is live.</p></div></div>
+      <div class="journey-step reveal"><div class="step-orb" style="border-color:var(--g1);color:var(--g1);">✦</div><div class="step-body"><h3>Autonomous Growth — Forever</h3><p>24/7 monitoring, alerts, seasonal adjustments, and automated nutrient refills. Your garden just grows.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section id="market">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Market Opportunity</div>
+    <h2 class="section-title reveal">A US$ 6 Billion Market<br>Waiting to Be Captured</h2>
+    <p class="reveal" style="color:var(--muted);max-width:540px;margin:0 auto;">Rising AQI awareness and biophilic design trends in Tier-1 Indian cities are driving unprecedented demand.</p>
+    <div class="market-bars reveal" id="market-bars">
+      <div class="market-row">
+        <div class="market-label">TAM — Smart Home/Garden India</div>
+        <div class="bar-track"><div class="bar-fill" data-width="100"></div></div>
+        <div class="market-val">US$ 6.0B</div>
+      </div>
+      <div class="market-row">
+        <div class="market-label">SAM — Urban Balcony Households</div>
+        <div class="bar-track"><div class="bar-fill" data-width="55"></div></div>
+        <div class="market-val">15 Million</div>
+      </div>
+      <div class="market-row">
+        <div class="market-label">SOM — 3-Year Target (Gujarat/MH)</div>
+        <div class="bar-track"><div class="bar-fill" data-width="12"></div></div>
+        <div class="market-val">10,000 Units</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="section-title reveal">Simple, Transparent Pricing</h2>
+    <p class="reveal" style="color:var(--muted);max-width:440px;margin:0 auto;">One-time hardware + optional monthly subscription. No hidden costs.</p>
+    <div class="pricing-cards">
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">₹4,999</div>
+        <div class="pricing-sub">One-time hardware kit</div>
+        <ul class="pricing-features">
+          <li>Smart Hub + 2 sensor nodes</li>
+          <li>Micro-drip for up to 4 plants</li>
+          <li>GreenLeaf app (free)</li>
+          <li>DIY installation guide</li>
+          <li>1-year hardware warranty</li>
+        </ul>
+        <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Started</button>
+      </div>
+      <div class="pricing-card featured reveal">
+        <div class="featured-badge">Most Popular</div>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">₹11,999</div>
+        <div class="pricing-sub">Kit + White-Glove Install</div>
+        <ul class="pricing-features">
+          <li>Smart Hub + 6 sensor nodes</li>
+          <li>Micro-drip for up to 15 plants</li>
+          <li>Professional site survey</li>
+          <li>White-glove installation</li>
+          <li>Monthly nutrient box (₹599/mo)</li>
+          <li>24/7 monitoring + alerts</li>
+          <li>2-year full warranty</li>
+        </ul>
+        <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Get Your Quote →</button>
+      </div>
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Subscription</div>
+        <div class="pricing-price">₹499<span style="font-size:1rem;font-weight:400;">/mo</span></div>
+        <div class="pricing-sub">Add-on to any hardware plan</div>
+        <ul class="pricing-features">
+          <li>Monthly NPK nutrient box</li>
+          <li>Organic pest prevention</li>
+          <li>Auto-calibrated to your plants</li>
+          <li>Pause or cancel anytime</li>
+          <li>Free delivery in Gujarat</li>
+        </ul>
+        <button class="pricing-btn" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Add to Plan</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCIALS -->
+<section id="financials">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">For Investors</div>
+    <h2 class="section-title reveal">Strong Unit Economics,<br>Compounding Growth</h2>
+    <div class="fin-grid reveal">
+      <div class="fin-card"><div class="fin-label">Break-even</div><div class="fin-val">19 Mo</div><div class="fin-desc">From launch</div></div>
+      <div class="fin-card"><div class="fin-label">Gross Margin (Y3)</div><div class="fin-val">54%</div><div class="fin-desc">Blended hardware + sub</div></div>
+      <div class="fin-card"><div class="fin-label">Seed Capital Ask</div><div class="fin-val">₹32L</div><div class="fin-desc">Gujarat rollout</div></div>
+      <div class="fin-card"><div class="fin-label">Sub Gross Margin</div><div class="fin-val">62%</div><div class="fin-desc">On nutrient boxes</div></div>
+    </div>
+    <div class="rev-chart reveal" id="rev-chart">
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.5rem;letter-spacing:0.08em;text-transform:uppercase;">3-Year Revenue Projection</p>
+      <div class="chart-bars">
+        <div class="chart-bar-wrap"><div class="chart-rev">₹15.2L</div><div class="chart-bar" data-h="30" style="height:0px;"></div><div class="chart-yr">FY26</div></div>
+        <div class="chart-bar-wrap"><div class="chart-rev">₹74.6L</div><div class="chart-bar" data-h="75" style="height:0px;"></div><div class="chart-yr">FY27</div></div>
+        <div class="chart-bar-wrap"><div class="chart-rev">₹2.48Cr</div><div class="chart-bar" data-h="140" style="height:0px;"></div><div class="chart-yr">FY28</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">The Team</div>
+    <h2 class="section-title reveal">Built by People Who<br>Love Plants (and Profits)</h2>
+    <div class="team-grid">
+      <div class="team-card reveal"><div class="avatar-glow">SD</div><div class="team-name">Shivam Desai</div><div class="team-role">CEO — Strategy & Fundraising</div><div class="team-desc">Drives vision, investor relations, and strategic growth.</div></div>
+      <div class="team-card reveal"><div class="avatar-glow">PN</div><div class="team-name">Piyush Nath</div><div class="team-role">CTO — IoT & App Dev</div><div class="team-desc">Architects the hardware ecosystem and mobile platform.</div></div>
+      <div class="team-card reveal"><div class="avatar-glow">IB</div><div class="team-name">Ishwar Brahmkhatri</div><div class="team-role">Marketing — Brand & UX</div><div class="team-desc">Shapes the GreenLeaf identity and customer experience.</div></div>
+      <div class="team-card reveal"><div class="avatar-glow">PP</div><div class="team-name">Pujan Patel</div><div class="team-role">Ops — Supply Chain & Finance</div><div class="team-desc">Manages Vadodara hub, procurement, and financials.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SWOT -->
+<section id="swot">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal" style="text-align:center;">SWOT</div>
+    <h2 class="section-title reveal" style="text-align:center;">Built to Win,<br>Eyes Wide Open</h2>
+    <div class="swot-grid">
+      <div class="swot-card swot-s reveal"><h3>Strengths</h3><p>First-mover in retrofittable IoT gardening. High-margin subscription model. Lean founding team. DPIIT registered.</p></div>
+      <div class="swot-card swot-w reveal"><h3>Weaknesses</h3><p>Dependence on third-party IoT parts. High initial consumer education required in a new market.</p></div>
+      <div class="swot-card swot-o reveal"><h3>Opportunities</h3><p>Booming luxury real estate. Alexa & Google Home integration. B2B pre-installation deals with premium developers.</p></div>
+      <div class="swot-card swot-t reveal"><h3>Threats</h3><p>Cheap non-smart drip kits as alternatives. Global microchip supply chain disruptions.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Get Started</div>
+    <h2 class="cta-title reveal">Your Plants Deserve Better.<br><span>So Do You.</span></h2>
+    <p class="cta-sub reveal">Get a free custom quote. Our team will reach out within 24 hours.</p>
+    <div class="cta-form reveal">
+      <input type="text" class="cta-input" placeholder="Your phone or email" id="lead-input">
+      <button class="cta-submit" onclick="handleSubmit()">Get Free Quote</button>
+    </div>
+    <p class="reveal" style="font-size:0.78rem;color:var(--muted);margin-top:1rem;">Currently serving Vadodara & Surat · Ahmedabad launching soon</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <svg width="26" height="26" viewBox="0 0 36 36" fill="none">
+      <path d="M18 32C18 32 5 23 5 13C5 7.477 10.924 4 18 4C25.076 4 31 7.477 31 13C31 23 18 32 18 32Z" fill="rgba(0,255,136,0.15)" stroke="#00ff88" stroke-width="1"/>
+    </svg>
+    <span>GreenLeaf SmartScape</span>
+  </div>
+  <div class="footer-links">
+    <a href="#product">Product</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#team">Team</a>
+    <a href="#cta">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 GreenLeaf SmartScape Systems LLP, Vadodara · DPIIT Registered</div>
+</footer>
+
+<script>
+// CUSTOM CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=(mx-6)+'px';cursor.style.top=(my-6)+'px';
+});
+function animateRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  ring.style.left=(rx-18)+'px';ring.style.top=(ry-18)+'px';
+  requestAnimationFrame(animateRing);
+}animateRing();
+document.querySelectorAll('a,button,.glass-card,.card-3d,.team-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.transform='scale(2)';ring.style.transform='scale(1.5)';});
+  el.addEventListener('mouseleave',()=>{cursor.style.transform='scale(1)';ring.style.transform='scale(1)';});
+});
+
+// THREE.JS BACKGROUND
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('bg-canvas'),alpha:true,antialias:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+camera.position.z=5;
+
+// Particles
+const particleCount=180;
+const positions=new Float32Array(particleCount*3);
+const colors=new Float32Array(particleCount*3);
+const sizes=new Float32Array(particleCount);
+for(let i=0;i<particleCount;i++){
+  positions[i*3]=(Math.random()-0.5)*20;
+  positions[i*3+1]=(Math.random()-0.5)*20;
+  positions[i*3+2]=(Math.random()-0.5)*10;
+  const bright=0.3+Math.random()*0.7;
+  colors[i*3]=0;colors[i*3+1]=bright;colors[i*3+2]=bright*0.5;
+  sizes[i]=Math.random()*3+1;
+}
+const pgeo=new THREE.BufferGeometry();
+pgeo.setAttribute('position',new THREE.BufferAttribute(positions,3));
+pgeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+pgeo.setAttribute('size',new THREE.BufferAttribute(sizes,1));
+const pmat=new THREE.PointsMaterial({size:0.06,vertexColors:true,transparent:true,opacity:0.7,sizeAttenuation:true});
+const particles=new THREE.Points(pgeo,pmat);
+scene.add(particles);
+
+// Floating leaf shapes (icosahedrons)
+const leaves=[];
+for(let i=0;i<8;i++){
+  const geo=new THREE.IcosahedronGeometry(0.12+Math.random()*0.1,0);
+  const mat=new THREE.MeshBasicMaterial({color:new THREE.Color(0,0.8+Math.random()*0.2,0.4+Math.random()*0.3),wireframe:true,transparent:true,opacity:0.25});
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.position.set((Math.random()-0.5)*14,(Math.random()-0.5)*14,(Math.random()-0.5)*5);
+  mesh.userData={speed:0.003+Math.random()*0.004,floatSpeed:0.5+Math.random(),floatAmp:0.3+Math.random()*0.4,originY:mesh.position.y};
+  scene.add(mesh);leaves.push(mesh);
+}
+
+// Grid lines
+const gridMat=new THREE.LineBasicMaterial({color:0x00ff88,transparent:true,opacity:0.04});
+for(let i=-8;i<=8;i+=2){
+  const hg=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-10,i,-3),new THREE.Vector3(10,i,-3)]);
+  const vg=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(i,-10,-3),new THREE.Vector3(i,10,-3)]);
+  scene.add(new THREE.Line(hg,gridMat));scene.add(new THREE.Line(vg,gridMat));
+}
+
+let t=0,mouseX=0,mouseY=0;
+document.addEventListener('mousemove',e=>{mouseX=(e.clientX/window.innerWidth-0.5)*0.5;mouseY=(e.clientY/window.innerHeight-0.5)*0.5;});
+
+function animate(){
+  requestAnimationFrame(animate);t+=0.008;
+  particles.rotation.y=t*0.04;particles.rotation.x=t*0.02;
+  leaves.forEach((l,i)=>{
+    l.rotation.x+=l.userData.speed;l.rotation.y+=l.userData.speed*0.7;
+    l.position.y=l.userData.originY+Math.sin(t*l.userData.floatSpeed)*l.userData.floatAmp;
+  });
+  camera.position.x+=(mouseX-camera.position.x)*0.03;
+  camera.position.y+=(-mouseY-camera.position.y)*0.03;
+  camera.lookAt(scene.position);
+  renderer.render(scene,camera);
+}animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
+
+// ANIMATED BARS
+const barObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.bar-fill').forEach(b=>{b.style.width=b.dataset.width+'%';});
+      barObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.3});
+const mb=document.getElementById('market-bars');
+if(mb)barObs.observe(mb);
+
+// ANIMATED CHART BARS
+const chartObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.chart-bar').forEach((b,i)=>{
+        setTimeout(()=>{b.style.height=b.dataset.h+'px';},i*200);
+      });
+      chartObs.unobserve(e.target);
+    }
+  });
+},{threshold:0.3});
+const rc=document.getElementById('rev-chart');
+if(rc)chartObs.observe(rc);
+
+// 3D TILT CARDS
+document.querySelectorAll('.glass-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');
+    card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%');
+  });
+});
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>{
+  document.querySelector('nav').style.boxShadow=window.scrollY>20?'0 4px 30px rgba(0,0,0,0.5)':'none';
+});
+
+// CTA
+function handleSubmit(){
+  const v=document.getElementById('lead-input').value.trim();
+  if(!v){document.getElementById('lead-input').focus();return;}
+  document.querySelector('.cta-form').innerHTML='<div style="background:rgba(0,255,136,0.08);color:#00ff88;padding:1rem 2rem;border-radius:50px;font-weight:500;border:1px solid rgba(0,255,136,0.25);box-shadow:0 0 20px rgba(0,255,136,0.15);">🌿 We\'ll reach out within 24 hours — your garden is about to get smarter!</div>';
+}
+</script>
+</body>
+</html>
